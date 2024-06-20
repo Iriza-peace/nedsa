@@ -111,6 +111,7 @@ public:
         }
     }
 
+    //DOES PATIENTS EXIST
     bool doesPatientIdExist(int patient_id) const{
         PatientsLL *temp = patients;
         while (temp != nullptr) {
@@ -122,6 +123,7 @@ public:
         return false;
     }
 
+    //SEE IF THE DOCTOR EXISTS
     bool doesDoctorIdExist(int doctor_id) const {
         DoctorsLL *temp = doctors;
         while (temp != nullptr) {
@@ -174,7 +176,7 @@ public:
         Appointments *temp = appointments;
         while (temp != nullptr) {
             if (temp->appointment_id == appointment_id) {
-                throw std::invalid_argument("Appointment ID already exists. Please enter a unique ID.");
+                throw std::invalid_argument("Appointment ID already exists.");
             }
             temp = temp->next;
         }
@@ -183,10 +185,10 @@ public:
         appointments = newAppointment;
     }
 
-    void inquireAndRegisterPatient() {
+    void RegisterPatient() {
         int patient_id;
         std::string name, dob, gender;
-        std::cout << "PATIENT REGISTRATION\n----------------------\n";
+        std::cout << "***PATIENT REGISTRATION\n***";
         while (true) {
             try {
                 std::cout << "ID: ";
@@ -229,10 +231,10 @@ public:
         }
     }
 
-    void inquireAndRegisterDoctor() {
+    void RegisterDoctor() {
         int doctor_id;
         std::string name, specialization;
-        std::cout << "DOCTOR REGISTRATION\n-------------------\n";
+        std::cout << "***DOCTOR REGISTRATION***\n";
         while (true) {
             try {
                 std::cout << "ID: ";
@@ -258,10 +260,10 @@ public:
         }
     }
 
-    void inquireAndRegisterAppointment() {
+    void RegisterAppointment() {
         int appointment_id, patient_id, doctor_id;
         std::string appointment_date;
-        std::cout << "APPOINTMENT REGISTRATION\n----------------------\n";
+        std::cout << "***APPOINTMENT REGISTRATION\n***";
         while (true) {
             try {
                 std::cout << "ID: ";
@@ -343,11 +345,11 @@ int main() {
     HealthcareSystem system;
     int choice;
     std::cout << "*****************************************************\n";
-    std::cout << "**********RUHENGERI HOSPITAL MANAGEMENT SYSTEM    ****\n";
+    std::cout << "**********RUHENGERI HOSPITAL MANAGEMENT SYSTEM *******\n";
     std::cout << "*****************************************************\n";
     while (true) {
         std::cout <<
-                "Menu:\n1. Register patient\n2. Register doctor\n3. Register appointment\n4. Display patients\n5. Display doctors\n6. Display appointments\n7. Exit\n";
+                "Menu:\n1. REGISTER PATIENT\n2. REGISTER DOCTOR\n3. REGISTER APPOINTMENT\n4. DISPLAY PATIENTS\n5. DISPLAY DOCTORS\n6. DISPLAY APPOINTMENTS\n7. EXIT\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
         if (std::cin.fail()) {
@@ -361,17 +363,17 @@ int main() {
             switch (choice) {
                 case 1: {
                     // Register patient
-                    system.inquireAndRegisterPatient();
+                    system.RegisterPatient();
                     break;
                 }
                 case 2: {
                     // Register doctor
-                    system.inquireAndRegisterDoctor();
+                    system.RegisterDoctor();
                     break;
                 }
                 case 3: {
                     // Register appointment
-                    system.inquireAndRegisterAppointment();
+                    system.RegisterAppointment();
                     break;
                 }
                 case 4:
