@@ -1,321 +1,399 @@
-
-
 #include <iostream>
-#include <string>
-#include <list>
-#include <set>
-#include <algorithm>
+#include <limits>
 
-using namespace std;
-
-// Patient structure to hold patient details
-struct Patient {
-    int patientId{};
-    string name;
-    string dob;
-    string gender;
-};
-
-// Doctor structure to hold doctor details
-
-struct Doctor {
-    int doctorId{};
-    string name;
-    string specialization;
-};
-
-// Appointment structure to hold appointment details
-
-struct Appointment {
-
-    int appointmentId{};
-    int patientId{};
-    int doctorId{};
-    string appointmentDate;
-};
-
-
-// Linked list to store patients
-list<Patient> patientsLL;
-
-// Linked list to store doctors
-list<Doctor> doctorsLL;
-
-// Linked list to store appointments
-list<Appointment> appointmentsLL;
-
-
-// Function to check if a patient id already exists
-
-bool isPatientIdExists(int patientId) {
-    for (const Patient& patient : patientsLL) {
-        if (patient.patientId == patientId) {
-            return true;
-        }
-    }
-    return false;
-}
-
-// Function to check if a doctor id already exists
-
-bool isDoctorIdExists(int doctorId) {
-    for (const Doctor& doctor : doctorsLL) {
-        if (doctor.doctorId == doctorId) {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-// Function to check if an appointment id already exists
-
-bool isAppointmentIdExists(int appointmentId) {
-    for (const Appointment& appointment : appointmentsLL) {
-        if (appointment.appointmentId == appointmentId) {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-// Function to get patient details from the user
-
-bool getPatientDetails(Patient& patient) {
-    cout << "*****PATIENT REGISTRATION*****" << endl;
-
-    cout << "ID: ";
-    cin >> patient.patientId;
-
-    if (isPatientIdExists(patient.patientId)) {
-        cout << "Error: Patient with ID " << patient.patientId << " already exists." << endl;
+bool isValidDate(const std::string &dob) {
+    // Check if the date is in the correct format
+    if (dob.length() != 10 || dob[2] != '/' || dob[5] != '/') {
         return false;
     }
 
-    cout << "NAME: ";
-    cin.ignore();
-    getline(cin, patient.name);
+    int day = std::stoi(dob.substr(0, 2));
+    int month = std::stoi(dob.substr(3, 2));
+    int year = std::stoi(dob.substr(6, 4));
 
-    cout << "DOB: ";
-    getline(cin, patient.dob);
-
-    cout << "GENDER: ";
-    getline(cin, patient.gender);
-    return true;
-}
-
-
-// Function to get doctor details from the user
-
-bool getDoctorDetails(Doctor& doctor) {
-    cout << "*****DOCTOR REGISTRATION*****" << endl;
-
-    cout << "ID: ";
-    cin >> doctor.doctorId;
-
-    if (isDoctorIdExists(doctor.doctorId)) {
-        cout << "Error: Doctor with ID " << doctor.doctorId << " already exists." << endl;
+    // Check if the date components are valid
+    if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
         return false;
     }
 
-    cout << "NAME: ";
-    cin.ignore();
-    getline(cin, doctor.name);
-
-    cout << "SPECIALIZATION: ";
-    getline(cin, doctor.specialization);
+    // Check if the date is not in the future
+    time_t t = time(nullptr); // get time now
+    struct tm *now = localtime(&t);
+    if (year > (now->tm_year + 1900) || (year == (now->tm_year + 1900) && month > (now->tm_mon + 1)) || (
+            year == (now->tm_year + 1900) && month == (now->tm_mon + 1) && day > now->tm_mday)) {
+        return false;
+    }
 
     return true;
 }
 
+class PatientsLL {
+public:
+    int patient_id;
+    std::string name;
+    std::string dob;
+    std::string gender;
+    PatientsLL *next;
 
-// Function to get appointment details from the user
+    PatientsLL(int patient_id, std::string name, std::string dob, std::string gender) {
+        this->patient_id = patient_id;
+        this->name = name;
+        this->dob = dob;
+        this->gender = gender;
+        this->next = nullptr;
+    }
+};
 
-bool getAppointmentDetails(Appointment& appointment) {
-    cout << "*****APPOINTMENT REGISTRATION*****" << endl;
+class DoctorsLL {
+public:
+    int doctor_id;
+    std::string name;
+    std::string specialization;
+    DoctorsLL *next;
 
-    cout << "ID: ";
-    cin >> appointment.appointmentId;
+    DoctorsLL(int doctor_id, std::string name, std::string specialization) {
+        this->doctor_id = doctor_id;
+        this->name = name;
+        this->specialization = specialization;
+        this->next = nullptr;
+    }
+};
 
-    if (isAppointmentIdExists(appointment.appointmentId)) {
-        cout << "Error: Appointment with ID " << appointment.appointmentId << " already exists." << endl;
+class Appointments {
+public:
+    int appointment_id;
+    int patient_id;
+    int doctor_id;
+    std::string appointment_date;
+    Appointments *next;
+
+    Appointments(int appointment_id, int patient_id, int doctor_id, std::string appointment_date) {
+        this->appointment_id = appointment_id;
+        this->patient_id = patient_id;
+        this->doctor_id = doctor_id;
+        this->appointment_date = appointment_date;
+        this->next = nullptr;
+    }
+};
+
+class HealthcareSystem {
+public:
+    PatientsLL *patients;
+    DoctorsLL *doctors;
+    Appointments *appointments;
+
+    HealthcareSystem() {
+        patients = nullptr;
+        doctors = nullptr;
+        appointments = nullptr;
+    }
+
+    ~HealthcareSystem() {
+        // Delete all nodes in the patients linked list
+        while (patients != nullptr) {
+            PatientsLL* next = patients->next;
+            delete patients;
+            patients = next;
+        }
+
+        // Delete all nodes in the doctors linked list
+        while (doctors != nullptr) {
+            DoctorsLL* next = doctors->next;
+            delete doctors;
+            doctors = next;
+        }
+
+        // Delete all nodes in the appointments linked list
+        while (appointments != nullptr) {
+            Appointments* next = appointments->next;
+            delete appointments;
+            appointments = next;
+        }
+    }
+
+    bool doesPatientIdExist(int patient_id) const{
+        PatientsLL *temp = patients;
+        while (temp != nullptr) {
+            if (temp->patient_id == patient_id) {
+                return true;
+            }
+            temp = temp->next;
+        }
         return false;
     }
 
-    cout << "PATIENT ID: ";
-    cin >> appointment.patientId;
-
-    if (!isPatientIdExists(appointment.patientId)) {
-        cout << "Error: Patient with ID " << appointment.patientId << " does not exist." << endl;
+    bool doesDoctorIdExist(int doctor_id) const {
+        DoctorsLL *temp = doctors;
+        while (temp != nullptr) {
+            if (temp->doctor_id == doctor_id) {
+                return true;
+            }
+            temp = temp->next;
+        }
         return false;
     }
 
-    cout << "DOCTOR ID: ";
-    cin >> appointment.doctorId;
-
-    if (!isDoctorIdExists(appointment.doctorId)) {
-        cout << "Error: Doctor with ID " << appointment.doctorId << " does not exist." << endl;
+    bool doesAppointmentIdExist(int appointment_id) const {
+        Appointments *temp = appointments;
+        while (temp != nullptr) {
+            if (temp->appointment_id == appointment_id) {
+                return true;
+            }
+            temp = temp->next;
+        }
         return false;
     }
 
-    cout << "APPOINTMENT DATE: ";
-    cin.ignore();
-    getline(cin, appointment.appointmentDate);
-
-    return true;
-}
-
-
-// Function to display the patients
-
-
-void displayPatients() {
-    cout << "*****PATIENTS*****" << endl;
-    for (const Patient& patient : patientsLL) {
-        cout << "ID: " << patient.patientId << endl;
-        cout << "NAME: " << patient.name << endl;
-        cout << "DOB: " << patient.dob << endl;
-        cout << "GENDER: " << patient.gender <<endl;
+    void registerPatient(int patient_id, std::string name, std::string dob, std::string gender) {
+        PatientsLL *temp = patients;
+        while (temp != nullptr) {
+            if (temp->patient_id == patient_id) {
+                throw std::invalid_argument("Patient ID already exists. Please enter a unique ID.");
+            }
+            temp = temp->next;
+        }
+        auto *newPatient = new PatientsLL(patient_id, name, dob, gender);
+        newPatient->next = patients;
+        patients = newPatient;
     }
-}
 
-
-// Function to display the doctors
-
-void displayDoctors() {
-    cout << "*****DOCTORS*****" << endl;
-    for (const Doctor& doctor : doctorsLL) {
-        cout << "ID: " << doctor.doctorId << endl;
-        cout << "NAME: " << doctor.name << endl;
-        cout << "SPECIALIZATION: " << doctor.specialization << endl;
+    void registerDoctor(int doctor_id, std::string name, std::string specialization) {
+        DoctorsLL *temp = doctors;
+        while (temp != nullptr) {
+            if (temp->doctor_id == doctor_id) {
+                throw std::invalid_argument("Doctor ID already exists. Please enter a unique ID.");
+            }
+            temp = temp->next;
+        }
+        auto *newDoctor = new DoctorsLL(doctor_id, name, specialization);
+        newDoctor->next = doctors;
+        doctors = newDoctor;
     }
-}
 
-
-//function to display the appointments
-
-void displayAppointments() {
-    cout << "*****APPOINTMENTS*****" << endl;
-    for (const Appointment& appointment : appointmentsLL) {
-        cout << "ID: " << appointment.appointmentId << endl;
-        cout << "PATIENT ID: " << appointment.patientId << endl;
-        cout << "DOCTOR ID: " << appointment.doctorId << endl;
-        cout << "APPOINTMENT DATE: " << appointment.appointmentDate << endl;
+    void registerAppointment(int appointment_id, int patient_id, int doctor_id, std::string appointment_date) {
+        Appointments *temp = appointments;
+        while (temp != nullptr) {
+            if (temp->appointment_id == appointment_id) {
+                throw std::invalid_argument("Appointment ID already exists. Please enter a unique ID.");
+            }
+            temp = temp->next;
+        }
+        Appointments *newAppointment = new Appointments(appointment_id, patient_id, doctor_id, appointment_date);
+        newAppointment->next = appointments;
+        appointments = newAppointment;
     }
-}
 
-
-//function to exist
-void exit() {
-    cout << "Exiting the program..." << endl;
-    cout << "Thank you for using the hospital management system." << endl;
-}
-
-//function to return to the menu
-
-void returnToMenu() {
-    cout << "Returning to the menu..." << endl;
-}
-
-
-int main () {
-
-    // Menu
-    cout << "************************************\n";
-    cout << "* WELCOME TO THE RUHENGERI HOSPITAL MANAGEMENT SYSTEM! *\n";
-    cout << "************************************\n";
-    cout << "Please enter your choice:\n";
-
-    //continue to display the menu
-    char choice;
-    cout<<"Menu\n";
-    cout<<"1. REGISTER A PATIENT\n";
-    cout<<"2. REGISTER A DOCTOR\n";
-    cout<<"3. REGISTER AN APPOINTMENT\n";
-    cout<<"4. DISPLAY PATIENTS \n";
-    cout<<"5. DISPLAY DOCTORS\n";
-    cout<<"6. DISPLAY APPOINTMENTS\n";
-    cout<<"7. EXIT\n";
-
-    cin>>choice;
-    cin.ignore();
-
-
-    switch (choice) {
-
-        case '1': {
-            Patient patient;
-            getPatientDetails(patient);
-            patientsLL.push_back(patient);
-
-
-            break;
-        }
-
-        case '2': {
-            Doctor doctor;
-            getDoctorDetails(doctor);
-            doctorsLL.push_back(doctor);
-            break;
-        }
-
-        case '3': {
-            Appointment appointment;
-            getAppointmentDetails(appointment);
-            appointmentsLL.push_back(appointment);
-            break;
-        }
-
-        case '4': {
-
-            displayPatients();
-            break;
-        }
-
-        case '5': {
-            displayDoctors();
-            break;
-        }
-
-        case '6': {
-
-            displayAppointments();
-            break;
-        }
-
-        case '7': {
-            exit();
-            break;
-        }
-
-        //default case
-        default: {
-            cout << "Invalid command. Please enter a valid command." << endl;
+    void inquireAndRegisterPatient() {
+        int patient_id;
+        std::string name, dob, gender;
+        std::cout << "PATIENT REGISTRATION\n----------------------\n";
+        while (true) {
+            try {
+                std::cout << "ID: ";
+                std::cin >> patient_id;
+                if (std::cin.fail()) {
+                    throw std::invalid_argument("Invalid input for patient ID. Please enter a number.");
+                }
+                if(doesPatientIdExist(patient_id)) {
+                    throw std::invalid_argument("Patient ID already exists. Please enter a unique ID.");
+                }
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear the input buffer
+                std::cout << "NAME: ";
+                std::getline(std::cin, name);
+                while (true) {
+                    std::cout << "DoB (dd/mm/yyyy): ";
+                    std::getline(std::cin, dob);
+                    if (isValidDate(dob)) {
+                        break;
+                    } else {
+                        std::cout <<
+                                "Invalid date. Please enter in the format dd/mm/yyyy and the date should not be in the future.\n";
+                    }
+                }
+                while (true) {
+                    std::cout << "GENDER (male/female): ";
+                    std::getline(std::cin, gender);
+                    if (gender == "male" || gender == "female") {
+                        break;
+                    } else {
+                        std::cout << "Invalid gender. Please enter either 'male' or 'female'.\n";
+                    }
+                }
+                registerPatient(patient_id, name, dob, gender);
+                break; // break the loop if no exception was thrown
+            } catch (const std::invalid_argument &e) {
+                std::cout << "INVALID_ARGUMENT_EXCEPTION " << e.what() << std::endl;
+                std::cin.clear(); // clear the error flag
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear the input buffer
+            }
         }
     }
 
-    return 0;
+    void inquireAndRegisterDoctor() {
+        int doctor_id;
+        std::string name, specialization;
+        std::cout << "DOCTOR REGISTRATION\n-------------------\n";
+        while (true) {
+            try {
+                std::cout << "ID: ";
+                std::cin >> doctor_id;
+                if (std::cin.fail()) {
+                    throw std::invalid_argument("Invalid input for doctor ID. Please enter a number.");
+                }
+                if(doesDoctorIdExist(doctor_id)) {
+                    throw std::invalid_argument("Doctor ID already exists. Please enter a unique ID.");
+                }
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear the input buffer
+                std::cout << "NAME: ";
+                std::getline(std::cin, name);
+                std::cout << "SPECIALIZATION: ";
+                std::getline(std::cin, specialization);
+                registerDoctor(doctor_id, name, specialization);
+                break; // break the loop if no exception was thrown
+            } catch (const std::invalid_argument &e) {
+                std::cout << "INVALID_ARGUMENT_EXCEPTION " << e.what() << std::endl;
+                std::cin.clear(); // clear the error flag
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear the input buffer
+            }
+        }
+    }
 
+    void inquireAndRegisterAppointment() {
+        int appointment_id, patient_id, doctor_id;
+        std::string appointment_date;
+        std::cout << "APPOINTMENT REGISTRATION\n----------------------\n";
+        while (true) {
+            try {
+                std::cout << "ID: ";
+                std::cin >> appointment_id;
+                if (std::cin.fail()) {
+                    throw std::invalid_argument("Invalid input for appointment ID. Please enter a number.");
+                }
+                if (doesAppointmentIdExist(appointment_id)) {
+                    throw std::invalid_argument("Appointment ID already exists. Please enter a unique ID.");
+                }
+                std::cout << "PATIENT ID: ";
+                std::cin >> patient_id;
+                if (std::cin.fail()) {
+                    throw std::invalid_argument("Invalid input for patient ID. Please enter a number.");
+                }
+                // check if the patient ID exists
+                if (!doesPatientIdExist(patient_id)) {
+                    throw std::invalid_argument("Patient ID does not exist. Please register the patient first.");
+                }
+                std::cout << "DOCTOR ID: ";
+                std::cin >> doctor_id;
+                if (std::cin.fail()) {
+                    throw std::invalid_argument("Invalid input for doctor ID. Please enter a number.");
+                }
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear the input buffer
+                // check if the doctor ID exists
+                if (!doesDoctorIdExist(doctor_id)) {
+                    throw std::invalid_argument("Doctor ID does not exist. Please register the doctor first.");
+                }
+                while (true) {
+                    std::cout << "APPOINTMENT DATE (dd/mm/yyyy): ";
+                    std::getline(std::cin, appointment_date);
+                    if (isValidDate(appointment_date)) {
+                        break;
+                    } else {
+                        std::cout <<
+                                "Invalid date. Please enter in the format dd/mm/yyyy and the date should not be in the future.\n";
+                    }
+                }
+                registerAppointment(appointment_id, patient_id, doctor_id, appointment_date);
+                break; // break the loop if no exception was thrown
+            } catch (const std::invalid_argument &e) {
+                std::cout << "INVALID_ARGUMENT_EXCEPTION " << e.what() << std::endl;
+                std::cin.clear(); // clear the error flag
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear the input buffer
+            }
+        }
+    }
+
+    void displayPatients() const {
+        PatientsLL *temp = patients;
+        while (temp != nullptr) {
+            std::cout << "Patient ID: " << temp->patient_id << ", Name: " << temp->name << ", DOB: " << temp->dob <<
+                    ", Gender: " << temp->gender << std::endl;
+            temp = temp->next;
+        }
+    }
+
+    void displayDoctors() const {
+        DoctorsLL *temp = doctors;
+        while (temp != nullptr) {
+            std::cout << "Doctor ID: " << temp->doctor_id << ", Name: " << temp->name << ", Specialization: " << temp->
+                    specialization << std::endl;
+            temp = temp->next;
+        }
+    }
+
+    void displayAppointments() const {
+        Appointments *temp = appointments;
+        while (temp != nullptr) {
+            std::cout << "Appointment ID: " << temp->appointment_id << ", Patient ID: " << temp->patient_id <<
+                    ", Doctor ID: " << temp->doctor_id << ", Appointment Date: " << temp->appointment_date << std::endl;
+            temp = temp->next;
+        }
+    }
+};
+
+int main() {
+    HealthcareSystem system;
+    int choice;
+    std::cout << "*****************************************************\n";
+    std::cout << "*****       RUHENGERI RH HealthCare System       ****\n";
+    std::cout << "*****************************************************\n";
+    while (true) {
+        std::cout <<
+                "Menu:\n1. Register patient\n2. Register doctor\n3. Register appointment\n4. Display patients\n5. Display doctors\n6. Display appointments\n7. Exit\n";
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
+        if (std::cin.fail()) {
+            std::cin.clear(); // clear the error flag
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear the input buffer
+            std::cout << "Invalid input. Please enter a number.\n\n";
+            continue;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear the input buffer
+        try {
+            switch (choice) {
+                case 1: {
+                    // Register patient
+                    system.inquireAndRegisterPatient();
+                    break;
+                }
+                case 2: {
+                    // Register doctor
+                    system.inquireAndRegisterDoctor();
+                    break;
+                }
+                case 3: {
+                    // Register appointment
+                    system.inquireAndRegisterAppointment();
+                    break;
+                }
+                case 4:
+                    // Display patients
+                    system.displayPatients();
+                    break;
+                case 5:
+                    // Display doctors
+                    system.displayDoctors();
+                    break;
+                case 6:
+                    // Display appointments
+                    system.displayAppointments();
+                    break;
+                case 7:
+                    // Exit
+                    return 0;
+                default:
+                    std::cout << "Invalid choice. Please try again.\n\n";
+            }
+        } catch (const std::exception &e) {
+            std::cout << e.what() << std::endl;
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
