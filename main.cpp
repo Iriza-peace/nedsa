@@ -102,6 +102,7 @@ bool getPatientDetails(Patient& patient) {
 
     cout << "GENDER: ";
     getline(cin, patient.gender);
+    return true;
 }
 
 
@@ -124,6 +125,8 @@ bool getDoctorDetails(Doctor& doctor) {
 
     cout << "SPECIALIZATION: ";
     getline(cin, doctor.specialization);
+
+    return true;
 }
 
 
@@ -159,6 +162,8 @@ bool getAppointmentDetails(Appointment& appointment) {
     cout << "APPOINTMENT DATE: ";
     cin.ignore();
     getline(cin, appointment.appointmentDate);
+
+    return true;
 }
 
 
@@ -200,6 +205,7 @@ void displayAppointments() {
     }
 }
 
+
 //function to exist
 void exit() {
     cout << "Exiting the program..." << endl;
@@ -219,10 +225,10 @@ int main () {
     cout << "************************************\n";
     cout << "* WELCOME TO THE RUHENGERI HOSPITAL MANAGEMENT SYSTEM! *\n";
     cout << "************************************\n";
-    cout << "Please enter a command:\n";
+    cout << "Please enter your choice:\n";
 
     //continue to display the menu
-    char command;
+    char choice;
     cout<<"Menu\n";
     cout<<"1. REGISTER A PATIENT\n";
     cout<<"2. REGISTER A DOCTOR\n";
@@ -232,15 +238,14 @@ int main () {
     cout<<"6. DISPLAY APPOINTMENTS\n";
     cout<<"7. EXIT\n";
 
-    cin>>command;
+    cin>>choice;
     cin.ignore();
 
 
-    switch (command) {
+    switch (choice) {
 
         case '1': {
             Patient patient;
-            //if getPatientDetails become successful send this message "Successfully registered patient."
             getPatientDetails(patient);
             patientsLL.push_back(patient);
 
@@ -266,11 +271,9 @@ int main () {
 
             displayPatients();
             break;
-
         }
 
         case '5': {
-
             displayDoctors();
             break;
         }
@@ -293,8 +296,6 @@ int main () {
     }
 
     return 0;
-
-
 
 }
 
