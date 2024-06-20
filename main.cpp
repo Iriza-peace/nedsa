@@ -343,7 +343,7 @@ int main() {
     HealthcareSystem system;
     int choice;
     std::cout << "*****************************************************\n";
-    std::cout << "*****       RUHENGERI RH HealthCare System       ****\n";
+    std::cout << "**********RUHENGERI HOSPITAL MANAGEMENT SYSTEM    ****\n";
     std::cout << "*****************************************************\n";
     while (true) {
         std::cout <<
