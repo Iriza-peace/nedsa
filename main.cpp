@@ -163,7 +163,7 @@ public:
         DoctorsLL *temp = doctors;
         while (temp != nullptr) {
             if (temp->doctor_id == doctor_id) {
-                throw std::invalid_argument("Doctor ID already exists. Please enter a unique ID.");
+                throw std::invalid_argument("Doctor ID already exists.");
             }
             temp = temp->next;
         }
@@ -194,10 +194,10 @@ public:
                 std::cout << "ID: ";
                 std::cin >> patient_id;
                 if (std::cin.fail()) {
-                    throw std::invalid_argument("Invalid input for patient ID. Please enter a number.");
+                    throw std::invalid_argument("Invalid input for patient ID.");
                 }
                 if(doesPatientIdExist(patient_id)) {
-                    throw std::invalid_argument("Patient ID already exists. Please enter a unique ID.");
+                    throw std::invalid_argument("Patient ID already exists.");
                 }
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear the input buffer
                 std::cout << "NAME: ";
@@ -209,7 +209,7 @@ public:
                         break;
                     } else {
                         std::cout <<
-                                "Invalid date. Please enter in the format dd/mm/yyyy and the date should not be in the future.\n";
+                                "Invalid date. Please enter in the format dd/mm/yyyy\n";
                     }
                 }
                 while (true) {
@@ -218,7 +218,7 @@ public:
                     if (gender == "male" || gender == "female") {
                         break;
                     } else {
-                        std::cout << "Invalid gender. Please enter either 'male' or 'female'.\n";
+                        std::cout << "Invalid gender.\n";
                     }
                 }
                 registerPatient(patient_id, name, dob, gender);
