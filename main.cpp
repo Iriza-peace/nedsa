@@ -1,32 +1,7 @@
 #include <iostream>
 #include <limits>
 
-bool isValidDate(const std::string &dob) {
-    // Check if the date is in the correct format
-    if (dob.length() != 10 || dob[2] != '/' || dob[5] != '/') {
-        return false;
-    }
-
-    int day = std::stoi(dob.substr(0, 2));
-    int month = std::stoi(dob.substr(3, 2));
-    int year = std::stoi(dob.substr(6, 4));
-
-    // Check if the date components are valid
-    if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
-        return false;
-    }
-
-    // Check if the date is not in the future
-    time_t t = time(nullptr); // get time now
-    struct tm *now = localtime(&t);
-    if (year > (now->tm_year + 1900) || (year == (now->tm_year + 1900) && month > (now->tm_mon + 1)) || (
-            year == (now->tm_year + 1900) && month == (now->tm_mon + 1) && day > now->tm_mday)) {
-        return false;
-    }
-
-    return true;
-}
-
+//here is our patients linked list class
 class PatientsLL {
 public:
     int patient_id;
@@ -44,6 +19,8 @@ public:
     }
 };
 
+//here is our doctors linked list class
+
 class DoctorsLL {
 public:
     int doctor_id;
@@ -51,6 +28,7 @@ public:
     std::string specialization;
     DoctorsLL *next;
 
+    //here is a parameterized constructor
     DoctorsLL(int doctor_id, std::string name, std::string specialization) {
         this->doctor_id = doctor_id;
         this->name = name;
@@ -58,6 +36,8 @@ public:
         this->next = nullptr;
     }
 };
+
+//here is our appointments linked list class
 
 class Appointments {
 public:
@@ -67,6 +47,7 @@ public:
     std::string appointment_date;
     Appointments *next;
 
+    //here is a parameterized constructor
     Appointments(int appointment_id, int patient_id, int doctor_id, std::string appointment_date) {
         this->appointment_id = appointment_id;
         this->patient_id = patient_id;
@@ -76,19 +57,20 @@ public:
     }
 };
 
-class HealthcareSystem {
+//here is our healthcare system class
+class Hospital {
 public:
     PatientsLL *patients;
     DoctorsLL *doctors;
     Appointments *appointments;
 
-    HealthcareSystem() {
+    Hospital() {
         patients = nullptr;
         doctors = nullptr;
         appointments = nullptr;
     }
 
-    ~HealthcareSystem() {
+    ~Hospital() {
         // Delete all nodes in the patients linked list
         while (patients != nullptr) {
             PatientsLL* next = patients->next;
@@ -150,7 +132,7 @@ public:
         PatientsLL *temp = patients;
         while (temp != nullptr) {
             if (temp->patient_id == patient_id) {
-                throw std::invalid_argument("Patient ID already exists. Please enter a unique ID.");
+                throw std::invalid_argument("Patient ID already exists.");
             }
             temp = temp->next;
         }
@@ -188,7 +170,7 @@ public:
     void RegisterPatient() {
         int patient_id;
         std::string name, dob, gender;
-        std::cout << "***PATIENT REGISTRATION\n***";
+        std::cout << "***PATIENT REGISTRATION***\n";
         while (true) {
             try {
                 std::cout << "ID: ";
@@ -240,7 +222,7 @@ public:
                 std::cout << "ID: ";
                 std::cin >> doctor_id;
                 if (std::cin.fail()) {
-                    throw std::invalid_argument("Invalid input for doctor ID. Please enter a number.");
+                    throw std::invalid_argument("Invalid input for doctor ID.");
                 }
                 if(doesDoctorIdExist(doctor_id)) {
                     throw std::invalid_argument("Doctor ID already exists. Please enter a unique ID.");
@@ -312,6 +294,32 @@ public:
             }
         }
     }
+    bool isValidDate(const std::string &dob) {
+        // Check if the date is in the correct format
+        if (dob.length() != 10 || dob[2] != '/' || dob[5] != '/') {
+            return false;
+        }
+
+        int day = std::stoi(dob.substr(0, 2));
+        int month = std::stoi(dob.substr(3, 2));
+        int year = std::stoi(dob.substr(6, 4));
+
+        // Check if the date components are valid
+        if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
+            return false;
+        }
+
+        // Check if the date is not in the future
+        time_t t = time(nullptr); // get time now
+        struct tm *now = localtime(&t);
+        if (year > (now->tm_year + 1900) || (year == (now->tm_year + 1900) && month > (now->tm_mon + 1)) || (
+                year == (now->tm_year + 1900) && month == (now->tm_mon + 1) && day > now->tm_mday)) {
+            return false;
+                }
+
+        return true;
+    }
+
 
     void displayPatients() const {
         PatientsLL *temp = patients;
@@ -342,9 +350,9 @@ public:
 };
 
 int main() {
-    HealthcareSystem system;
+    Hospital system;
     int choice;
-    std::cout << "*****************************************************\n";
+    std::cout << "*********************WELCOME*******************************\n";
     std::cout << "**********RUHENGERI HOSPITAL MANAGEMENT SYSTEM *******\n";
     std::cout << "*****************************************************\n";
     while (true) {
