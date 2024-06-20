@@ -251,29 +251,29 @@ public:
                 std::cout << "ID: ";
                 std::cin >> appointment_id;
                 if (std::cin.fail()) {
-                    throw std::invalid_argument("Invalid input for appointment ID. Please enter a number.");
+                    throw std::invalid_argument("Invalid input for appointment ID.");
                 }
                 if (doesAppointmentIdExist(appointment_id)) {
-                    throw std::invalid_argument("Appointment ID already exists. Please enter a unique ID.");
+                    throw std::invalid_argument("Appointment ID already exists.");
                 }
                 std::cout << "PATIENT ID: ";
                 std::cin >> patient_id;
                 if (std::cin.fail()) {
-                    throw std::invalid_argument("Invalid input for patient ID. Please enter a number.");
+                    throw std::invalid_argument("Invalid input for patient ID.");
                 }
                 // check if the patient ID exists
                 if (!doesPatientIdExist(patient_id)) {
-                    throw std::invalid_argument("Patient ID does not exist. Please register the patient first.");
+                    throw std::invalid_argument("Patient ID does not exist.");
                 }
                 std::cout << "DOCTOR ID: ";
                 std::cin >> doctor_id;
                 if (std::cin.fail()) {
-                    throw std::invalid_argument("Invalid input for doctor ID. Please enter a number.");
+                    throw std::invalid_argument("Invalid input for doctor ID.");
                 }
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear the input buffer
                 // check if the doctor ID exists
                 if (!doesDoctorIdExist(doctor_id)) {
-                    throw std::invalid_argument("Doctor ID does not exist. Please register the doctor first.");
+                    throw std::invalid_argument("Doctor ID does not exist.");
                 }
                 while (true) {
                     std::cout << "APPOINTMENT DATE (dd/mm/yyyy): ";
@@ -282,7 +282,7 @@ public:
                         break;
                     } else {
                         std::cout <<
-                                "Invalid date. Please enter in the format dd/mm/yyyy and the date should not be in the future.\n";
+                                "Invalid date.\n";
                     }
                 }
                 registerAppointment(appointment_id, patient_id, doctor_id, appointment_date);
@@ -361,7 +361,8 @@ int main() {
         std::cout << "Enter your choice: ";
         std::cin >> choice;
         if (std::cin.fail()) {
-            std::cin.clear(); // clear the error flag
+
+            std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear the input buffer
             std::cout << "Invalid input. Please enter a number.\n\n";
             continue;
@@ -400,7 +401,7 @@ int main() {
                     // Exit
                     return 0;
                 default:
-                    std::cout << "Invalid choice. Please try again.\n\n";
+                    std::cout << "Invalid command.Try again.\n\n";
             }
         } catch (const std::exception &e) {
             std::cout << e.what() << std::endl;
